@@ -14,8 +14,27 @@ const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-console.log(uri);
 
+async function run() {
+  try {
+    await client.connect();
+    const database = client.db("lipstickDB");
+    const productsCollection = database.collection("products");
+    //get limited products
+    app.get("/products", async (req, res) => {
+      const query = req.query.size;
+      const size = parseInt(query);
+      const cursor = productsCollection.find({});
+      const products = await cursor.limit(size).toArray();
+      res.send(products);
+    });
+
+    console.log("connected");
+  } finally {
+    // await client.close();
+  }
+}
+run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
