@@ -20,6 +20,7 @@ async function run() {
     await client.connect();
     const database = client.db("lipstickDB");
     const productsCollection = database.collection("products");
+    const usersCollection = database.collection("users");
     //get products
     app.get("/products", async (req, res) => {
       const query = req.query.size;
@@ -39,6 +40,33 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const product = await productsCollection.findOne(query);
       res.send(product);
+    });
+    //post user
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.json(result);
+    });
+    //upsert user
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = { $set: user };
+      const result = await usersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
+    });
+    //make admin
+    app.put("/users/admin", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.json(result);
     });
 
     console.log("connected");
