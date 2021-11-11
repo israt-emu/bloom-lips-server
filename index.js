@@ -20,13 +20,25 @@ async function run() {
     await client.connect();
     const database = client.db("lipstickDB");
     const productsCollection = database.collection("products");
-    //get limited products
+    //get products
     app.get("/products", async (req, res) => {
       const query = req.query.size;
       const size = parseInt(query);
       const cursor = productsCollection.find({});
-      const products = await cursor.limit(size).toArray();
+      let products;
+      if (size) {
+        products = await cursor.limit(size).toArray();
+      } else {
+        products = await cursor.toArray();
+      }
       res.send(products);
+    });
+    //get products by id
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const product = await productsCollection.findOne(query);
+      res.send(product);
     });
 
     console.log("connected");
