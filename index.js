@@ -112,8 +112,10 @@ async function run() {
     //update order status
     app.put("/orders/:id", async (req, res) => {
       const id = req.params.id;
+      const order = req.body;
+      const status = order.status;
       const filter = { _id: ObjectId(id) };
-      const updateDoc = { $set: { status: "Shipped" } };
+      const updateDoc = { $set: { status: status } };
       const result = await ordersCollection.updateOne(filter, updateDoc);
       res.json(result);
     });
