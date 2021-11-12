@@ -21,6 +21,7 @@ async function run() {
     const database = client.db("lipstickDB");
     const productsCollection = database.collection("products");
     const usersCollection = database.collection("users");
+    const ordersCollection = database.collection("orders");
     //get products
     app.get("/products", async (req, res) => {
       const query = req.query.size;
@@ -68,7 +69,41 @@ async function run() {
       const result = await usersCollection.updateOne(filter, updateDoc);
       res.json(result);
     });
-
+    //orders post
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await ordersCollection.insertOne(order);
+      res.json(result);
+    });
+    //get orders
+    app.get("/orders", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      let orders;
+      if (email) {
+        const cursor = ordersCollection.find(query);
+        orders = await cursor.toArray();
+      } else {
+        const cursor = ordersCollection.find({});
+        orders = await cursor.toArray();
+      }
+      res.send(orders);
+    });
+    //delete order by id
+    app.delete("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ordersCollection.deleteOne(query);
+      res.json(result);
+    });
+    //update order status
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = { $set: { status: "Shipped" } };
+      const result = await ordersCollection.updateOne(filter, updateDoc);
+      res.json(result);
+    });
     console.log("connected");
   } finally {
     // await client.close();
