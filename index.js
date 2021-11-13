@@ -74,6 +74,17 @@ async function run() {
       );
       res.json(result);
     });
+    //get user by email
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      res.send({ admin: isAdmin });
+    });
     //make admin
     app.put("/users/admin", async (req, res) => {
       const user = req.body;
