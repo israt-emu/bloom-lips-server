@@ -1,4 +1,4 @@
-Here Is my server side link(https://blooming-brushlands-04717.herokuapp.com/)
+Here Is my live site link(https://bloom-lips.web.app/)
 
 ## About my project
 
