@@ -22,6 +22,7 @@ async function run() {
     const productsCollection = database.collection("products");
     const usersCollection = database.collection("users");
     const ordersCollection = database.collection("orders");
+    const reviewCollection = database.collection("reviews");
     //get products
     app.get("/products", async (req, res) => {
       const query = req.query.size;
@@ -129,6 +130,19 @@ async function run() {
       const updateDoc = { $set: { status: status } };
       const result = await ordersCollection.updateOne(filter, updateDoc);
       res.json(result);
+    });
+    //save reviews to database
+    app.post("/reviews", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.json(result);
+    });
+    //get review
+    app.get("/reviews", async (req, res) => {
+      const cursor = reviewCollection.find({});
+      const reviews = await cursor.toArray();
+      console.log(reviews);
+      res.send(reviews);
     });
     console.log("connected");
   } finally {
