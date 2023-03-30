@@ -1,6 +1,7 @@
 # My website name: Bloom Lips
 
 Here Is my live site link(https://bloom-lips.web.app/)
+server: https://bloom-lips-server.onrender.com/
 
 ## About my project
 
