@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const {MongoClient} = require("mongodb");
 const cors = require("cors");
 const ObjectId = require("mongodb").ObjectId;
 require("dotenv").config();
@@ -39,7 +39,7 @@ async function run() {
     //get products by id
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = {_id: ObjectId(id)};
       const product = await productsCollection.findOne(query);
       res.send(product);
     });
@@ -52,7 +52,7 @@ async function run() {
     //delete product
     app.delete("/products/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = {_id: ObjectId(id)};
       const result = await productsCollection.deleteOne(query);
       res.json(result);
     });
@@ -65,32 +65,28 @@ async function run() {
     //upsert user
     app.put("/users", async (req, res) => {
       const user = req.body;
-      const filter = { email: user.email };
-      const options = { upsert: true };
-      const updateDoc = { $set: user };
-      const result = await usersCollection.updateOne(
-        filter,
-        updateDoc,
-        options
-      );
+      const filter = {email: user.email};
+      const options = {upsert: true};
+      const updateDoc = {$set: user};
+      const result = await usersCollection.updateOne(filter, updateDoc, options);
       res.json(result);
     });
     //get user by email
     app.get("/users/:email", async (req, res) => {
       const email = req.params.email;
-      const query = { email: email };
+      const query = {email: email};
       const user = await usersCollection.findOne(query);
       let isAdmin = false;
       if (user?.role === "admin") {
         isAdmin = true;
       }
-      res.send({ admin: isAdmin });
+      res.send({admin: isAdmin});
     });
     //make admin
     app.put("/users/admin", async (req, res) => {
       const user = req.body;
-      const filter = { email: user.email };
-      const updateDoc = { $set: { role: "admin" } };
+      const filter = {email: user.email};
+      const updateDoc = {$set: {role: "admin"}};
       const result = await usersCollection.updateOne(filter, updateDoc);
       res.json(result);
     });
@@ -103,7 +99,7 @@ async function run() {
     //get orders
     app.get("/orders", async (req, res) => {
       const email = req.query.email;
-      const query = { email: email };
+      const query = {email: email};
       let orders;
       if (email) {
         const cursor = ordersCollection.find(query);
@@ -117,7 +113,7 @@ async function run() {
     //delete order by id
     app.delete("/orders/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id) };
+      const query = {_id: ObjectId(id)};
       const result = await ordersCollection.deleteOne(query);
       res.json(result);
     });
@@ -126,8 +122,8 @@ async function run() {
       const id = req.params.id;
       const order = req.body;
       const status = order.status;
-      const filter = { _id: ObjectId(id) };
-      const updateDoc = { $set: { status: status } };
+      const filter = {_id: ObjectId(id)};
+      const updateDoc = {$set: {status: status}};
       const result = await ordersCollection.updateOne(filter, updateDoc);
       res.json(result);
     });
